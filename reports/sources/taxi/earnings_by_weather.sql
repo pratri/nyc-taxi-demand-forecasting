@@ -1,0 +1,1 @@
+select * from main.mart_earnings_by_weather

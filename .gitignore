@@ -1,0 +1,8 @@
+raw/
+taxi.duckdb
+*.json
+target/
+dbt_packages/
+logs/
+reports/node_modules/
+reports/.evidence/

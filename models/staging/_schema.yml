@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: stg_yellow_trips
+    description: "Renamed and typed yellow taxi trips, one row per trip. Incremental on pickup_at with a generated surrogate key."
+    columns:
+      - name: trip_id
+        description: "Surrogate key hashed from vendor, pickup/dropoff timestamps, pickup zone, and fare. Source has no natural primary key."
+        tests:
+          - not_null
+          - unique
+      - name: pickup_at
+        description: "Timestamp the meter was engaged."
+        tests:
+          - not_null
+      - name: dropoff_at
+        description: "Timestamp the meter was disengaged."
+        tests:
+          - not_null
+      - name: pickup_location_id
+        description: "TLC taxi zone where the trip started."
+        tests:
+          - not_null

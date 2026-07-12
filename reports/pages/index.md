@@ -28,4 +28,6 @@ select * from taxi.top_zones
 
 <DataTable data={top} rows=15/>
 
-Airport zones (132 = JFK, 138 = LaGuardia) dominate, consistent with long high-value airport runs.
+Airport zones (LaGuardia and JFK) dominate. These are ranked among high-volume slots
+(500+ trips), so they reflect reliable, repeatable opportunities rather than small-sample
+outliers where one long fare distorts the average.

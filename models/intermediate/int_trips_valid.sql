@@ -15,8 +15,9 @@ valid as (
         fare_amount + tip_amount + extra as driver_earnings
     from trips
     where
-        dropoff_at > pickup_at
+        {{ dbt.datediff('pickup_at', 'dropoff_at', 'minute') }} >= 1
         and (fare_amount + tip_amount + extra) > 0
+        and pickup_location_id not in (264, 265)
 )
 
 select * from valid

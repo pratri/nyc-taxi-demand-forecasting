@@ -1,8 +1,12 @@
+.venv/
 raw/
 taxi.duckdb
 *.json
 target/
 dbt_packages/
 logs/
+node_modules/
 reports/node_modules/
 reports/.evidence/
+reports/build/
+reports/.svelte-kit/

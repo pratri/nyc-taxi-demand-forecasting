@@ -1,4 +1,4 @@
 name: taxi
 type: duckdb
 options:
-  filename: ../../../taxi.duckdb
+  filename: marts.duckdb

@@ -5,3 +5,4 @@ sources:
     tables:
       - name: yellow_tripdata
       - name: weather_central_park
+      - name: taxi_zones

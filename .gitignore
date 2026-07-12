@@ -2,6 +2,8 @@
 raw/
 taxi.duckdb
 *.json
+!reports/package.json
+!reports/package-lock.json
 target/
 dbt_packages/
 logs/

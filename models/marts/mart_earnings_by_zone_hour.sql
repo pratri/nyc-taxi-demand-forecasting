@@ -10,7 +10,7 @@ enriched as (
     select
         pickup_location_id,
         extract(hour from pickup_at) as pickup_hour,
-        {% if target.name == 'dev' %}
+        {% if target.type == 'duckdb' %}
         extract(dow from pickup_at) as pickup_dow,
         {% else %}
         extract(dayofweek from pickup_at) as pickup_dow,

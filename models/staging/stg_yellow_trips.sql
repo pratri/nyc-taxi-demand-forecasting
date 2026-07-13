@@ -1,6 +1,6 @@
 {{
     config(
-        materialized='incremental' if target.name == 'dev' else 'table',
+        materialized='incremental' if target.type == 'duckdb' else 'table',
         unique_key='trip_id'
     )
 }}
@@ -50,7 +50,7 @@ deduped as (
 )
 
 select
-    {% if target.name == 'dev' %}
+    {% if target.type == 'duckdb' %}
     * exclude (_row_num)
     {% else %}
     * except (_row_num)

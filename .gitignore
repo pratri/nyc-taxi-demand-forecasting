@@ -1,6 +1,7 @@
 .venv/
 raw/
 taxi.duckdb
+sample.duckdb
 *.json
 !reports/package.json
 !reports/package-lock.json

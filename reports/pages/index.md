@@ -20,8 +20,8 @@ snowy days in 2025 happened to land on days that were already high-earning for
 seasonal and day-of-week reasons.
 
 When you drive matters far more. Every day-of-week and month coefficient is
-significant at p < 0.02, with swings up to $9.18/hour by day of week and $14.36/hour
-by month.
+statistically significant (p-values all below 0.02), with swings up to $9.18/hour by
+day of week and $14.36/hour by month.
 
 ## Top Earning Zone / Hour Combinations
 

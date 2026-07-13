@@ -27,7 +27,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['dry', 'light rain', 'rain', 'snow']
+              arguments:
+                values: ['dry', 'light rain', 'rain', 'snow']
 
   - name: mart_daily_earnings
     description: "One row per day: earnings, weather, and calendar features. Modeling table for the weather regression."
@@ -40,4 +41,5 @@ models:
       - name: is_weekend
         tests:
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]

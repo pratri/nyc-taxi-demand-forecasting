@@ -8,6 +8,8 @@ An analytics engineering project built around one question: where and when shoul
 
 It takes 48.7M taxi trips, joins them to daily weather, runs them through a layered and tested dbt pipeline, and finishes with a regression that separates the weather effect from calendar effects. The same dbt models run on both DuckDB and BigQuery.
 
+[![NYC taxi driver earnings dashboard](docs/dashboard.png)](https://nyc-taxi-analytics.vercel.app/)
+
 ## Headline Finding
 
 Weather has no measurable effect on driver earnings once you control for the calendar. When you drive is what matters.

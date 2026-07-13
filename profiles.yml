@@ -5,11 +5,15 @@ nyc_taxi:
       type: duckdb
       path: taxi.duckdb
       threads: 4
+    sample:
+      type: duckdb
+      path: sample.duckdb
+      threads: 4
     bigquery:
       type: bigquery
       method: service-account
       project: nyc-taxi-501018
       dataset: nyc_taxi
-      keyfile: C:\Users\Pranav\Documents\CS_Python\nyc-taxi-pipeline\nyc-taxi-501018-bb4e786d0865.json
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '') }}"
       threads: 4
       maximum_bytes_billed: 1000000000000

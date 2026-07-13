@@ -24,17 +24,18 @@ daily as (
 featured as (
     select
         *,
-        {% if target.name == 'dev' %}
+        {% if target.type == 'duckdb' %}
         extract(dow from trip_date)                 as day_of_week,
         {% else %}
         extract(dayofweek from trip_date)           as day_of_week,
         {% endif %}
         extract(month from trip_date)               as month,
-        {% if target.name == 'dev' %}
+        {% if target.type == 'duckdb' %}
         case when extract(dow from trip_date) in (0, 6) then 1 else 0 end as is_weekend
         {% else %}
         case when extract(dayofweek from trip_date) in (1, 7) then 1 else 0 end as is_weekend
-        {% endif %}    from daily
+        {% endif %}
+    from daily
 )
 
 select * from featured

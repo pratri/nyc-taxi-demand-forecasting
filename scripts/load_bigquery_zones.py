@@ -1,9 +1,7 @@
 from google.cloud import bigquery
-import os
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\Pranav\Documents\CS_Python\nyc-taxi-pipeline\nyc-taxi-501018-bb4e786d0865.json"
-
-PROJECT_ID = "520469854189"
+# Auth uses the GOOGLE_APPLICATION_CREDENTIALS env var (see load_bigquery.py).
+PROJECT_ID = "nyc-taxi-501018"
 client = bigquery.Client(project=PROJECT_ID)
 
 table_id = f"{PROJECT_ID}.raw.taxi_zones"

@@ -33,5 +33,5 @@ reports/.evidence/
 reports/build/
 reports/.svelte-kit/
 
-# editor / tool settings
+# editor settings
 reports/.vscode/

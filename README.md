@@ -118,7 +118,7 @@ CI builds everything on a committed 3% sample (trips touching 12 busy zones, Sep
 ## Limitations
 
 - These are completed pickups, not demand. When it rains and every cab is full, the data can't show the people who didn't get one. Uber and Lyft aren't included.
-- The weather choice, the learning rate change and picking LightGBM were all decided looking at the same 6 test months that are reported. A cleaner setup would make those calls on earlier months (e.g. Sep to Nov 2025) and only score the test months once.
+- The weather choice and the learning rate change were first made while looking at the reported test months. I rechecked them afterwards on Oct and Nov 2025 with the rule written down before running (`taxi/tune.py`: 5 LightGBM settings, then 3 weather options, lowest pooled WAPE wins, keep the current setup if it's within 0.1 points). The current setup and no weather held up (`artifacts/tune/`). A learning rate of 0.05 came out 0.08 points better but hit the round cap, so it might do a bit better with more rounds. The options themselves were still picked after seeing test results, so this narrows the problem more than it removes it. LightGBM beat both neural nets in all 6 test months at both horizons, so the model choice wasn't rechecked.
 - One seed per model and hyperparameters set by hand, not tuned (the one change: LightGBM's learning rate went from 0.05 to 0.1 after it kept hitting the round cap). The LightGBM vs neural net gap is outside the bootstrap interval, but different seeds or tuning could narrow it.
 - TLC publishes data a couple of months late, so this couldn't run live as is.
 - One weather station for the whole city, including the airports.
@@ -147,6 +147,7 @@ python -m taxi load         # parse weather, load raw tables
 python -m taxi build        # dbt deps + build + tests
 python -m taxi backtest     # slow: hours of training, mostly the GRU
 python -m taxi report       # pool runs, metrics, bootstrap intervals
+python -m taxi tune         # optional: recheck LightGBM settings on Oct-Nov 2025, ~1h
 python -m taxi weather
 python -m taxi export       # tables for the dashboard
 cd reports && npm install && npm run sources && npm run dev

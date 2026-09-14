@@ -28,6 +28,7 @@ def main(argv=None):
     bt.add_argument("--horizons", nargs="+", type=int)
     bt.add_argument("--folds", nargs="+", help="test months, e.g. 2026-01")
     bt.add_argument("--tag", help="name for the run files (default: the model names)")
+    sub.add_parser("tune", help="recheck LightGBM settings on Oct-Nov 2025")
     sub.add_parser("report", help="pool backtest runs into metrics")
     sub.add_parser("weather", help="hourly weather regressions")
     sub.add_parser("export", help="write dashboard tables")
@@ -50,6 +51,9 @@ def main(argv=None):
     elif args.cmd == "backtest":
         from taxi import backtest
         backtest.run(models=args.models, horizons=args.horizons, folds=args.folds, tag=args.tag)
+    elif args.cmd == "tune":
+        from taxi import tune
+        tune.run()
     elif args.cmd == "report":
         from taxi import backtest
         backtest.report()

@@ -1,7 +1,4 @@
-"""Poisson regressions of pickups on weather, hourly and daily, split into Manhattan, airports and outer boroughs.
-
-These are completed pickups, so rain can also show up as fewer free cabs. Uber/Lyft aren't in the data.
-"""
+"""Poisson regressions of pickups on weather, hourly and daily, for Manhattan, airports and outer boroughs."""
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm

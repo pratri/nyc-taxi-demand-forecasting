@@ -1,9 +1,6 @@
-"""Recheck the LightGBM settings on Oct-Nov 2025, before any test month.
+"""Recheck LightGBM settings on Oct-Nov 2025, before the test months.
 
-Same protocol as the backtest (early-stop on the 4 weeks before the month,
-refit, score the month). The rule is fixed up front: lowest pooled WAPE over
-both months and both horizons wins, and anything within 0.1 points of the
-current setup keeps the current setup.
+Lowest pooled WAPE wins, but keep the current setup if it's within 0.1 points.
 """
 import json
 

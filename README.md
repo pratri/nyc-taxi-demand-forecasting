@@ -1,6 +1,6 @@
 # NYC Taxi Demand Forecasting
 
-[![ci](https://github.com/pratri/nyc-taxi-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/pratri/nyc-taxi-analytics/actions/workflows/ci.yml)
+[![ci](https://github.com/pratri/nyc-taxi-demand-forecasting/actions/workflows/ci.yml/badge.svg)](https://github.com/pratri/nyc-taxi-demand-forecasting/actions/workflows/ci.yml)
 
 [Dashboard](https://nyc-taxi-analytics.vercel.app/)
 

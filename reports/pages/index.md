@@ -2,15 +2,14 @@
 title: NYC Taxi Demand Forecasting
 ---
 
-Forecasts of hourly yellow cab pickups for the 103 zones that make up 99% of
-pickups, trained on Jan 2024 to May 2026 TLC trips plus Central Park hourly
-weather. All scores are from a rolling backtest: each test month is predicted by
-models trained only on data from before that month.
+Hourly yellow cab pickup forecasts for 103 NYC taxi zones (99% of all pickups), using
+TLC trips from Jan 2024 to May 2026 and Central Park weather. Every score here comes
+from a rolling backtest, so each month is predicted by models that only saw earlier data.
 
 ## Forecast error
 
-WAPE = total absolute error / total pickups. 15% means the forecast was off by 15
-pickups for every 100 that happened.
+WAPE is total absolute error divided by total pickups. 15% means the forecast was
+off by 15 pickups for every 100 that happened.
 
 ```sql scores
 select * from taxi.scores order by horizon, wape_pct
@@ -26,12 +25,13 @@ order by fold
 
 <LineChart data={folds} x=fold y=wape_pct series=model title="WAPE by test month, 1 hour ahead"/>
 
-The seasonal baselines fall apart in December and January because of the holidays. The trained models hold up much better, but January is still their worst month.
+The simple baselines struggle in December and January because of the holidays. The
+trained models handle it better, but January is still their worst month.
 
-### Are the gaps real?
+### Model gaps
 
-Difference in WAPE between two models, in percentage points, with a 95% interval
-from resampling whole days. If the interval doesn't cross zero, the gap is bigger than day-to-day noise.
+Difference in WAPE between two models in percentage points, with a 95% interval from
+resampling days. If the interval doesn't include zero, the gap isn't just noise.
 
 ```sql comparisons
 select * from taxi.comparisons order by horizon, hours, model_a
@@ -75,9 +75,8 @@ select feature, round(h1, 3) as gain_pct from taxi.importance order by h1 desc l
 
 ## Zone embeddings
 
-The MLP learns a 16-number vector per zone. This plots the first two principal
-components, colored by TLC service zone. It's one training run, so don't read too much
-into it.
+The MLP learns a 16-number vector for each zone. This is the first two principal
+components, colored by TLC service zone. It's from one training run.
 
 ```sql embeddings
 select * from taxi.embeddings
@@ -87,11 +86,9 @@ select * from taxi.embeddings
 
 ## Rain and pickups
 
-Poisson regression of pickups on rain, snow and temperature bands. The hourly
-version has hour-of-week and month effects with standard errors clustered by day;
-the daily version sums the same data per day. These are associations with
-completed pickups (rain can also mean fewer free cabs).
-Changes are in percent.
+Percent change in pickups from a Poisson regression on rain, snow and temperature,
+with hour-of-week and month effects. The daily rows use the same data summed by day.
+These are completed pickups, so rain could also mean fewer free cabs.
 
 ```sql rain
 select "group", granularity, term, level, change, ci_low, ci_high
@@ -107,11 +104,11 @@ select * from taxi.rain_profile order by hour_of_day
 
 <LineChart data={rain_profile} x=hour_of_day y=pickups series=wet title="Manhattan core, average pickups per hour"/>
 
-## Where to go next (rough)
+## Where to go next
 
-Forecast pickups per cab that dropped off in the zone the hour before, times the
-typical fare there. TLC data has no driver IDs, so this guesses at competition
-rather than measuring wait times.
+Forecast pickups divided by the cabs that dropped off in the zone the hour before,
+times the typical fare there. There are no driver IDs in the data, so this is only
+a rough guess at competition.
 
 ```sql pressure
 select * from taxi.pressure order by dollars_per_arriving_cab desc limit 20

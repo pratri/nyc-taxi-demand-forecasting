@@ -33,6 +33,59 @@ def demand_pressure(preds, panel, fold):
     return slots
 
 
+def readme_figure(preds, zone_name, zone_id, out=config.ROOT / "docs" / "forecast.png"):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    last = sorted(preds.fold.unique())[-1]
+    p = preds[(preds.fold == last) & (preds.horizon == 1) & (preds.zone_id == zone_id)]
+    start = p.hour_at.min() + pd.Timedelta(days=7 - p.hour_at.min().dayofweek)  # first Monday
+    p = p[(p.hour_at >= start) & (p.hour_at < start + pd.Timedelta(days=7))]
+    wide = p.pivot_table(index=["hour_at", "y"], columns="model", values="yhat").reset_index()
+
+    folds = pd.read_csv(config.ARTIFACTS / "metrics_by_fold.csv")
+    folds = folds[folds.horizon == 1].pivot(index="fold", columns="model", values="wape")
+
+    ink, muted, grid = "#0b0b0b", "#898781", "#e6e5e1"
+    colors = {"lightgbm": "#2a78d6", "seasonal_naive": "#eb6834"}
+    fig, (a, b) = plt.subplots(1, 2, figsize=(12, 3.8), gridspec_kw={"width_ratios": [2.2, 1]})
+    fig.patch.set_facecolor("#fcfcfb")
+    for ax in (a, b):
+        ax.set_facecolor("#fcfcfb")
+        ax.grid(axis="y", color=grid, linewidth=0.8)
+        ax.tick_params(colors=muted, labelsize=9)
+        for s in ["top", "right", "left"]:
+            ax.spines[s].set_visible(False)
+        ax.spines["bottom"].set_color(grid)
+
+    a.plot(wide.hour_at, wide.y, color=ink, linewidth=2, label="actual")
+    a.plot(wide.hour_at, wide.lightgbm, color=colors["lightgbm"], linewidth=2, label="LightGBM")
+    a.plot(wide.hour_at, wide.seasonal_naive, color=colors["seasonal_naive"], linewidth=2,
+           linestyle=(0, (4, 2)), label="same hour last week")
+    a.set_title(f"{zone_name}, 1 hour ahead, {start:%b %d}-{start + pd.Timedelta(days=6):%d %Y}",
+                color=ink, fontsize=11, loc="left")
+    a.set_ylabel("pickups per hour", color=muted, fontsize=9)
+    a.set_ylim(0, wide[["y", "lightgbm", "seasonal_naive"]].max().max() * 1.2)  # room for the legend
+    a.legend(frameon=False, fontsize=9, labelcolor=ink, loc="upper left", ncol=3)
+    a.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%a"))
+
+    x = range(len(folds))
+    for m, label in [("lightgbm", "LightGBM"), ("seasonal_naive", "same hour last week")]:
+        b.plot(x, folds[m] * 100, color=colors[m], linewidth=2, marker="o", markersize=5, label=label)
+        b.annotate(f"{folds[m].iloc[-1] * 100:.1f}%", (len(folds) - 1, folds[m].iloc[-1] * 100),
+                   xytext=(6, 0), textcoords="offset points", va="center", fontsize=9, color=ink)
+    b.set_xticks(list(x))
+    b.set_xticklabels([pd.Timestamp(f + "-01").strftime("%b") for f in folds.index])
+    b.set_ylim(0, None)
+    b.set_title("WAPE by test month, 1 hour ahead (%)", color=ink, fontsize=11, loc="left")
+    fig.tight_layout()
+    out.parent.mkdir(exist_ok=True)
+    fig.savefig(out, dpi=150, facecolor=fig.get_facecolor())
+    plt.close(fig)
+    return out
+
+
 def run(db_path=None):
     art = config.ARTIFACTS
     preds = pd.read_parquet(art / "predictions" / "backtest.parquet")
@@ -76,3 +129,4 @@ def run(db_path=None):
         out.unregister("df")
         print(f"{name}: {len(df):,} rows")
     out.close()
+    print("wrote", readme_figure(preds, "Midtown Center", 161))

@@ -4,6 +4,8 @@
 
 **[Dashboard](https://nyc-taxi-analytics.vercel.app/)**
 
+![Forecast vs actual for Midtown Center, and WAPE by test month](docs/forecast.png)
+
 Forecasting how many yellow cab pickups each NYC taxi zone will get in the next 1 and 6 hours, using 109M TLC trips (Jan 2024 to May 2026) and hourly weather from the Central Park NOAA station.
 
 This started as a dbt project about where drivers earn the most and whether weather matters. That version used daily weather and found little effect. Hourly weather showed a clear one, so I turned it into a forecasting project to see if weather helps predict demand. (Short answer: it doesn't, see below.)

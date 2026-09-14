@@ -19,13 +19,13 @@ Rolling backtest over 6 test months, Dec 2025 to May 2026. 103 zones, about 450k
 | Same hour last week | 26.4% | 26.4% |
 | Same hour, last 4 weeks averaged | 23.3% | 23.3% |
 | Last hour carried forward | 25.8% | 83.7% |
-| LightGBM | **13.6%** | **16.4%** |
+| LightGBM | **13.6%** | **16.3%** |
 | MLP with zone embeddings | 14.4% | 17.4% |
 | GRU over last 24h | 14.3% | 17.6% |
 
 LightGBM cuts the error of the seasonal baselines by 30 to 50%. The neural nets come close but are worse at both horizons, and the 95% intervals from resampling days don't cross zero (`artifacts/model_comparisons.csv`). The MLP and GRU get rain and snow as inputs, which made no difference for LightGBM (below). They also took about 2x (MLP) and 10x (GRU) longer to train on CPU, though those timings are rough since runs shared the machine.
 
-Where it struggles, 1 hour ahead: holidays (17.8% vs 13.5% on normal days), hours with at least 1mm of rain (17.9%), and low-volume zones in Brooklyn and the Bronx (35 to 46%), where a few pickups either way is a big percentage.
+Where it struggles, 1 hour ahead: holidays (17.8% vs 13.5% on normal days), hours with at least 1mm of rain (17.9%), and zones in Brooklyn and the Bronx (35% and 46%), which are mostly low volume, so a few pickups either way is a big percentage.
 
 ### Uncertainty
 
@@ -47,7 +47,7 @@ But weather features didn't help the forecasts:
 
 | LightGBM variant | 1h | 6h |
 |---|--:|--:|
-| No weather | 13.6% | 16.4% |
+| No weather | 13.6% | 16.3% |
 | Rain and snow only | 13.6% | 16.4% |
 | Rain, snow, temperature, wind | 13.8% | 17.4% |
 | Actual weather at the target hour (perfect forecast) | 13.8% | 16.9% |
@@ -120,7 +120,7 @@ CI builds everything on a committed 3% sample (trips touching 12 busy zones, Sep
 ## Limitations
 
 - These are completed pickups, not demand. When it rains and every cab is full, the data can't show the people who didn't get one. Uber and Lyft aren't included.
-- The weather choice and the learning rate change were first made while looking at the reported test months. I rechecked them afterwards on Oct and Nov 2025 with the rule written down before running (`taxi/tune.py`: 5 LightGBM settings, then 3 weather options, lowest pooled WAPE wins, keep the current setup if it's within 0.1 points). The current setup and no weather held up (`artifacts/tune/`). A learning rate of 0.05 came out 0.08 points better but hit the round cap, so it might do a bit better with more rounds. The options themselves were still picked after seeing test results, so this narrows the problem more than it removes it. LightGBM beat both neural nets in all 6 test months at both horizons, so the model choice wasn't rechecked.
+- The weather choice and the learning rate change were first made while looking at the reported test months. I rechecked them afterwards on Oct and Nov 2025 with the rule written down before running (`taxi/tune.py`: 5 LightGBM settings, then 3 weather options, lowest pooled WAPE wins, keep the current setup if it's within 0.1 points). The current setup and no weather held up (`artifacts/tune/`). A learning rate of 0.05 came out 0.07 points better and hit the 6000 round cap in two of its four runs, so it might do a bit better with more rounds. The options themselves were still picked after seeing test results, so this narrows the problem more than it removes it. LightGBM beat both neural nets in all 6 test months at both horizons, so the model choice wasn't rechecked.
 - One seed per model and hyperparameters set by hand, not tuned (the one change: LightGBM's learning rate went from 0.05 to 0.1 after it kept hitting the round cap). The LightGBM vs neural net gap is outside the bootstrap interval, but different seeds or tuning could narrow it.
 - TLC publishes data a couple of months late, so this couldn't run live as is.
 - One weather station for the whole city, including the airports.
